@@ -21,6 +21,11 @@
 (defconst *spell-check-support-enabled* nil) ;; Enable with t if you prefer
 (defconst *is-a-mac* (eq system-type 'darwin))
 
+(set-default-font "consolas-14")
+(set-fontset-font "fontset-default" 'chinese-gbk "微软雅黑")
+(setq face-font-rescale-alist '(("宋体" . 1.2)
+                ("微软雅黑" . 1.1)
+                ))
 ;;----------------------------------------------------------------------------
 ;; Adjust garbage collection thresholds during startup, and thereafter
 ;;----------------------------------------------------------------------------
@@ -34,6 +39,26 @@
 ;; Bootstrap config
 ;;----------------------------------------------------------------------------
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+
+
+(setq url-proxy-services
+   '(("no_proxy" . "^\\(localhost\\|10.*\\)")
+     ("http" . "proxy.tencent.com:8080")
+     ("https" . "proxy.tencent.com:8080")))
+
+
+(defvar http-proxy-host "proxy.tencent.com"
+"Host address for http proxy")
+(defvar http-proxy-port "8080"
+"Host port for http proxy")
+(defun open-http-proxy-stream (name buffer host service &rest parameters)
+"Open network stream via http proxy. Proxy is defined by variables http-proxy-host and http-proxy-port."
+(let ((tmp-process (apply 'open-network-stream name buffer http-proxy-host http-proxy-port parameters)))
+  (process-send-string name (format "CONNECT %s:%d HTTP/1.1\n\n" host service))
+  tmp-process))
+(setq erc-server-connect-function 'open-http-proxy-stream)
+
+
 (require 'init-utils)
 (require 'init-site-lisp) ;; Must come before elpa, as it may provide package.el
 ;; Calls (package-initialize)
@@ -84,26 +109,29 @@
 
 (require 'init-projectile)
 
+;(require 'init-evil)
+;(require 'init-multi-term)
+
 (require 'init-compile)
-(require 'init-crontab)
+;(require 'init-crontab)
 (require 'init-textile)
 (require 'init-markdown)
 (require 'init-csv)
-(require 'init-erlang)
+;(require 'init-erlang)
 (require 'init-javascript)
-(require 'init-php)
+;(require 'init-php)
 (require 'init-org)
 (require 'init-nxml)
-(require 'init-html)
-(require 'init-css)
+;(require 'init-html)
+;(require 'init-css)
 (require 'init-haml)
 (require 'init-http)
 (require 'init-python)
 (require 'init-haskell)
 (require 'init-elm)
 (require 'init-purescript)
-(require 'init-ruby)
-(require 'init-rails)
+;(require 'init-ruby)
+;(require 'init-rails)
 (require 'init-sql)
 (require 'init-rust)
 (require 'init-toml)
